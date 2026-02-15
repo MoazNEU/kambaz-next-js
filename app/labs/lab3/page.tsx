@@ -1,4 +1,6 @@
-import { TemplateContext } from "next/dist/shared/lib/app-router-context.shared-runtime";
+"use client";
+
+//import { TemplateContext } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import ArrowFunctions from "./ArrowFunctions";
 import BooleanVariables from "./BooleanVariables";
 import ConditionalOutputIfElse from "./ConditionalOutputIfElse";
