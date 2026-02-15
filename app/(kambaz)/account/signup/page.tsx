@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { FormControl, Form, Container  } from "react-bootstrap";
+import { FormControl } from "react-bootstrap";
 
 export default function Signup() {
   return (
@@ -13,41 +13,41 @@ export default function Signup() {
     //   <Link  href="signin" > Sign in </Link>
     // </div>
     <div
-      id="wd-signup-screen"> 
+      id="wd-signup-screen">
       <h3>Sign up</h3>
-      <FormControl 
+      <FormControl
         className="wd-username mb-2"
         placeholder="username"
         size="lg"
       />
-      
-      <FormControl 
+
+      <FormControl
         className="wd-password mb-2"
-        placeholder="password" 
+        placeholder="password"
         type="password"
         size="lg"
       />
-      
-      <FormControl 
+
+      <FormControl
         className="wd-password-verify mb-2"
-        placeholder="verify password" 
+        placeholder="verify password"
         type="password"
         size="lg"
       />
-      
-      <Link 
+
+      <Link
         href="profile"
         className="btn btn-primary w-100 mb-2 text-decoration-none"
         style={{ display: "inline-block" }}>
         Sign up
       </Link>
-      
-      <Link 
+
+      <Link
         href="signin"
         className="text-decoration-underline text-primary ">
         Sign in
       </Link>
-      
-    </div> 
+
+    </div>
   );
 }
