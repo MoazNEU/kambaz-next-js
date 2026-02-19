@@ -1,4 +1,4 @@
-
+"use client";
 import Link from "next/link";
 import { ListGroup, ListGroupItem, Button, Form } from "react-bootstrap";
 import { BsGripVertical } from "react-icons/bs";
