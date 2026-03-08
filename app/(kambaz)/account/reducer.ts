@@ -1,7 +1,28 @@
 import { createSlice } from "@reduxjs/toolkit";
-const initialState = {
+
+export type User = {
+    _id: string;
+    username: string;
+    password: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    dob: string;
+    role: string;
+    loginId: string;
+    section: string;
+    lastActivity: string;
+    totalActivity: string;
+} | null;
+
+type AccountState = {
+    currentUser: User;
+};
+
+const initialState: AccountState = {
     currentUser: null,
 };
+
 const accountSlice = createSlice({
     name: "account",
     initialState,
@@ -11,5 +32,6 @@ const accountSlice = createSlice({
         },
     },
 });
+
 export const { setCurrentUser } = accountSlice.actions;
 export default accountSlice.reducer;
