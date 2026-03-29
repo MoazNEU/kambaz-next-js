@@ -7,9 +7,10 @@ import { IoEllipsisVertical, IoChevronDown } from "react-icons/io5";
 import { FaFileAlt, FaCheckCircle } from "react-icons/fa";
 import { useParams } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { RootState } from "../../../store";
-import { deleteAssignment } from "./reducer";
+import { deleteAssignment, setAssignmentsForCourse } from "./reducer";
+import * as client from "../../../assignments/client";
 
 export default function Assignments() {
   const { cid } = useParams();
@@ -17,11 +18,26 @@ export default function Assignments() {
   const { assignments } = useSelector(
     (state: RootState) => state.assignmentsReducer
   );
+
+  const fetchAssignments = useCallback(async () => {
+    if (!cid) return;
+    const data = await client.findAssignmentsForCourse(cid as string);
+    dispatch(
+      setAssignmentsForCourse({
+        courseId: cid as string,
+        assignments: data,
+      })
+    );
+  }, [cid, dispatch]);
+
+  useEffect(() => {
+    fetchAssignments();
+  }, [fetchAssignments]);
+
   const courseAssignments = assignments.filter(
     (assignment: { course: string }) => assignment.course === cid
   );
 
-  // State for delete confirmation dialog
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [assignmentToDelete, setAssignmentToDelete] = useState<{
     _id: string;
@@ -33,8 +49,9 @@ export default function Assignments() {
     setShowDeleteDialog(true);
   };
 
-  const handleConfirmDelete = () => {
-    if (assignmentToDelete) {
+  const handleConfirmDelete = async () => {
+    if (assignmentToDelete && cid) {
+      await client.deleteAssignment(cid as string, assignmentToDelete._id);
       dispatch(deleteAssignment(assignmentToDelete._id));
     }
     setShowDeleteDialog(false);
@@ -48,7 +65,6 @@ export default function Assignments() {
 
   return (
     <div id="wd-assignments">
-      {/* Delete Confirmation Dialog */}
       <Modal show={showDeleteDialog} onHide={handleCancelDelete}>
         <Modal.Header closeButton>
           <Modal.Title>Confirm Delete</Modal.Title>

@@ -1,7 +1,7 @@
 import { Modal, FormControl, Button } from "react-bootstrap";
 export default function ModuleEditor({ show, handleClose, dialogTitle, moduleName, setModuleName, addModule, }: {
     show: boolean; handleClose: () => void; dialogTitle: string; moduleName: string; setModuleName: (name: string) => void;
-    addModule: () => void;
+    addModule: () => void | Promise<void>;
 }) {
     return (
         <Modal show={show} onHide={handleClose}>
@@ -15,8 +15,8 @@ export default function ModuleEditor({ show, handleClose, dialogTitle, moduleNam
             <Modal.Footer>
                 <Button variant="secondary" onClick={handleClose}> Cancel </Button>
                 <Button variant="primary"
-                    onClick={() => {
-                        addModule();
+                    onClick={async () => {
+                        await addModule();
                         handleClose();
                     }} > Add Module </Button>
             </Modal.Footer>

@@ -2,10 +2,23 @@
 
 import { Form, Button, Row, Col, Card, FormGroup } from "react-bootstrap";
 import { useParams, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../../../store";
 import { addAssignment, updateAssignment } from "../reducer";
+import * as client from "../../../../assignments/client";
+
+const defaultDescription = `The assignment is available online.
+
+Submit a link to the landing page of your Web application running on Netlify.
+
+The landing page should include the following:
+• Your full name and section
+• Links to each of the lab assignments
+• Link to the Kambaz application
+• Links to all relevant source code repositories
+
+The Kanbas application should include a link to navigate back to the landing page.`;
 
 export default function AssignmentEditor() {
   const { cid, aid } = useParams();
@@ -23,29 +36,60 @@ export default function AssignmentEditor() {
   const [assignment, setAssignment] = useState({
     _id: existingAssignment?._id || "",
     title: existingAssignment?.title || "New Assignment",
-    course: cid as string,
-    description: existingAssignment?.description || `The assignment is available online.
-
-Submit a link to the landing page of your Web application running on Netlify.
-
-The landing page should include the following:
-• Your full name and section
-• Links to each of the lab assignments
-• Link to the Kambaz application
-• Links to all relevant source code repositories
-
-The Kanbas application should include a link to navigate back to the landing page.`,
-    points: existingAssignment?.points || 100,
+    course: (cid as string) || "",
+    description: existingAssignment?.description || defaultDescription,
+    points: existingAssignment?.points ?? 100,
     due: existingAssignment?.due || "2025-05-13T23:59",
     from: existingAssignment?.from || "2025-05-06T00:00",
     until: existingAssignment?.until || "2025-05-20T23:59",
   });
 
-  const handleSave = () => {
+  useEffect(() => {
+    if (!cid || !aid || aid === "new") return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const data = await client.findAssignmentById(
+          cid as string,
+          aid as string
+        );
+        if (!cancelled && data) {
+          setAssignment({
+            _id: data._id,
+            title: data.title,
+            course: data.course,
+            description: data.description ?? defaultDescription,
+            points: data.points ?? 100,
+            due: data.due || "",
+            from: data.from || "",
+            until: data.until || "",
+          });
+        }
+      } catch {
+        /* keep form defaults / empty */
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [cid, aid]);
+
+  const handleSave = async () => {
+    if (!cid) return;
     if (isNewAssignment) {
-      dispatch(addAssignment(assignment));
+      const { _id, ...rest } = assignment;
+      const created = await client.createAssignment(cid as string, {
+        ...rest,
+        course: cid,
+      });
+      dispatch(addAssignment(created));
     } else {
-      dispatch(updateAssignment(assignment));
+      const updated = await client.updateAssignment(cid as string, {
+        ...assignment,
+        _id: assignment._id,
+        course: cid as string,
+      });
+      dispatch(updateAssignment(updated));
     }
     router.push(`/courses/${cid}/assignments`);
   };
@@ -100,7 +144,10 @@ The Kanbas application should include a link to navigate back to the landing pag
             id="wd-points"
             value={assignment.points}
             onChange={(e) =>
-              setAssignment({ ...assignment, points: parseInt(e.target.value) || 0 })
+              setAssignment({
+                ...assignment,
+                points: parseInt(e.target.value, 10) || 0,
+              })
             }
           />
         </Col>

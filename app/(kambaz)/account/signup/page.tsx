@@ -1,53 +1,63 @@
+"use client";
 import Link from "next/link";
-import { FormControl } from "react-bootstrap";
+import { useRouter } from "next/navigation";
+import { setCurrentUser } from "../reducer";
+import { useDispatch } from "react-redux";
+import { useState } from "react";
+import { FormControl, Alert } from "react-bootstrap";
+import * as client from "../client";
 
 export default function Signup() {
+  const [user, setUser] = useState<any>({});
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const dispatch = useDispatch();
+  const router = useRouter();
+
+  const signup = async () => {
+    setErrorMessage(null);
+    try {
+      const currentUser = await client.signup(user);
+      dispatch(setCurrentUser(currentUser));
+      router.push("/account/profile");
+    } catch (error: any) {
+      setErrorMessage(
+        error.response?.data?.message ?? error.message ?? "Sign up failed"
+      );
+    }
+  };
+
   return (
-    // <div id="wd-signup-screen">
-    //   <h3>Sign up</h3>
-    //   <input placeholder="username" className="wd-username" /><br/>
-    //   <input placeholder="password" type="password" className="wd-password" /><br/>
-    //   <input placeholder="verify password"
-    //          type="password" className="wd-password-verify" /><br/>
-    //   <Link  href="profile" > Sign up </Link><br />
-    //   <Link  href="signin" > Sign in </Link>
-    // </div>
-    <div
-      id="wd-signup-screen">
-      <h3>Sign up</h3>
+    <div className="wd-signup-screen" id="wd-signup-screen">
+      <h1>Sign up</h1>
+      {errorMessage && (
+        <Alert variant="danger" className="mb-2">
+          {errorMessage}
+        </Alert>
+      )}
       <FormControl
+        value={user.username ?? ""}
+        onChange={(e) => setUser({ ...user, username: e.target.value })}
         className="wd-username mb-2"
         placeholder="username"
-        size="lg"
       />
-
       <FormControl
+        value={user.password ?? ""}
+        onChange={(e) => setUser({ ...user, password: e.target.value })}
         className="wd-password mb-2"
         placeholder="password"
         type="password"
-        size="lg"
       />
-
-      <FormControl
-        className="wd-password-verify mb-2"
-        placeholder="verify password"
-        type="password"
-        size="lg"
-      />
-
-      <Link
-        href="profile"
-        className="btn btn-primary w-100 mb-2 text-decoration-none"
-        style={{ display: "inline-block" }}>
+      <button
+        type="button"
+        onClick={signup}
+        className="wd-signup-btn btn btn-primary mb-2 w-100"
+      >
         Sign up
-      </Link>
-
-      <Link
-        href="signin"
-        className="text-decoration-underline text-primary ">
+      </button>
+      <br />
+      <Link href="/account/signin" className="wd-signin-link">
         Sign in
       </Link>
-
     </div>
   );
 }
