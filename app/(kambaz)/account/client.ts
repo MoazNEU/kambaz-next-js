@@ -1,8 +1,8 @@
 import { axiosWithCredentials } from "../axios";
-import { HTTP_SERVER } from "../httpServer";
+import { HTTP_SERVER, apiUrl } from "../httpServer";
 
 export { HTTP_SERVER };
-export const USERS_API = HTTP_SERVER ? `${HTTP_SERVER}/api/users` : "";
+export const USERS_API = apiUrl("/api/users");
 
 function requireUsersApi(): string {
   if (!USERS_API) {

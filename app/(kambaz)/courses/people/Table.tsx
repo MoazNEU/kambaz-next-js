@@ -42,7 +42,7 @@ export default function PeopleTable({
         <tbody>
           {users.map((user: any) => (
             <tr key={user._id}>
-              <td className="wd-full-name text-nowrap">
+              <td className="wd-full-name" style={{ whiteSpace: "normal" }}>
                 <span
                   role="button"
                   tabIndex={0}

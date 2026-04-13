@@ -1,14 +1,14 @@
 import axios from "axios";
 import { axiosWithCredentials } from "../axios";
-import { HTTP_SERVER } from "../httpServer";
+import { HTTP_SERVER, apiUrl } from "../httpServer";
 
 /** Use credentials for module CRUD so it behaves like the rest of the app behind CORS. */
 const api = axiosWithCredentials;
 
 export { HTTP_SERVER };
-export const COURSES_API = HTTP_SERVER ? `${HTTP_SERVER}/api/courses` : "";
-export const MODULES_API = HTTP_SERVER ? `${HTTP_SERVER}/api/modules` : "";
-export const USERS_API = HTTP_SERVER ? `${HTTP_SERVER}/api/users` : "";
+export const COURSES_API = apiUrl("/api/courses");
+export const MODULES_API = apiUrl("/api/modules");
+export const USERS_API = apiUrl("/api/users");
 
 export const fetchAllCourses = async () => {
   const { data } = await axios.get(COURSES_API);
@@ -75,15 +75,19 @@ export const deleteCourse = async (id: string) => {
 };
 
 export const enrollIntoCourse = async (userId: string, courseId: string) => {
+  const uid = encodeURIComponent(String(userId));
+  const cid = encodeURIComponent(String(courseId));
   const response = await axiosWithCredentials.post(
-    `${USERS_API}/${userId}/courses/${courseId}`
+    `${USERS_API}/${uid}/courses/${cid}`
   );
   return response.data;
 };
 
 export const unenrollFromCourse = async (userId: string, courseId: string) => {
+  const uid = encodeURIComponent(String(userId));
+  const cid = encodeURIComponent(String(courseId));
   const response = await axiosWithCredentials.delete(
-    `${USERS_API}/${userId}/courses/${courseId}`
+    `${USERS_API}/${uid}/courses/${cid}`
   );
   return response.data;
 };

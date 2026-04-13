@@ -1,9 +1,9 @@
 import { axiosWithCredentials } from "../axios";
-import { HTTP_SERVER } from "../httpServer";
+import { HTTP_SERVER, apiUrl } from "../httpServer";
 
 export { HTTP_SERVER };
-export const USERS_API = HTTP_SERVER ? `${HTTP_SERVER}/api/users` : "";
-export const COURSES_API = HTTP_SERVER ? `${HTTP_SERVER}/api/courses` : "";
+export const USERS_API = apiUrl("/api/users");
+export const COURSES_API = apiUrl("/api/courses");
 
 export const createUserInCourse = async (
   courseId: string,

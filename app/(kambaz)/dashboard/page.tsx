@@ -89,16 +89,24 @@ export default function Dashboard() {
 
   const handleEnroll = async (courseId: string) => {
     if (!currentUser) return;
-    await client.enrollIntoCourse("current", courseId);
-    await refreshEnrollments();
-    await fetchCourses();
+    try {
+      await client.enrollIntoCourse("current", String(courseId));
+      await refreshEnrollments();
+      await fetchCourses();
+    } catch (e) {
+      console.error("enroll failed", e);
+    }
   };
 
   const handleUnenroll = async (courseId: string) => {
     if (!currentUser) return;
-    await client.unenrollFromCourse("current", courseId);
-    await refreshEnrollments();
-    await fetchCourses();
+    try {
+      await client.unenrollFromCourse("current", String(courseId));
+      await refreshEnrollments();
+      await fetchCourses();
+    } catch (e) {
+      console.error("unenroll failed", e);
+    }
   };
 
   const onDeleteCourse = async (courseId: string) => {

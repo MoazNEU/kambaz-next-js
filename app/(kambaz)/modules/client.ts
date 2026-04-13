@@ -1,10 +1,10 @@
 import { axiosWithCredentials } from "../axios";
-import { HTTP_SERVER } from "../httpServer";
+import { HTTP_SERVER, apiUrl } from "../httpServer";
 
 export { HTTP_SERVER };
 
 export const modulesApiForCourse = (cid: string) =>
-  HTTP_SERVER ? `${HTTP_SERVER}/api/courses/${cid}/modules` : "";
+  apiUrl(`/api/courses/${encodeURIComponent(cid)}/modules`);
 
 export const findModulesForCourse = async (cid: string) => {
   const response = await axiosWithCredentials.get(modulesApiForCourse(cid));

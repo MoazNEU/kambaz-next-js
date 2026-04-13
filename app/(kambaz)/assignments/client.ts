@@ -1,8 +1,8 @@
 import { axiosWithCredentials } from "../axios";
-import { HTTP_SERVER } from "../httpServer";
+import { HTTP_SERVER, apiUrl } from "../httpServer";
 
 export { HTTP_SERVER };
-export const COURSES_API = HTTP_SERVER ? `${HTTP_SERVER}/api/courses` : "";
+export const COURSES_API = apiUrl("/api/courses");
 
 const assignmentsUrl = (courseId: string) =>
   `${COURSES_API}/${courseId}/assignments`;

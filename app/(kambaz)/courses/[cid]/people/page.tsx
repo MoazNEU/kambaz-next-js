@@ -24,8 +24,14 @@ const emptyNewUser = {
   totalActivity: "",
 };
 
+function courseIdFromParams(cid: string | string[] | undefined) {
+  if (cid == null) return undefined;
+  return Array.isArray(cid) ? cid[0] : cid;
+}
+
 export default function People() {
-  const { cid } = useParams();
+  const { cid: cidParam } = useParams();
+  const cid = courseIdFromParams(cidParam as string | string[] | undefined);
   const { currentUser } = useSelector(
     (state: RootState) => state.accountReducer
   );
@@ -44,7 +50,7 @@ export default function People() {
     if (!cid) return;
     setLoading(true);
     try {
-      const data = await coursesClient.findUsersForCourse(cid as string);
+      const data = await coursesClient.findUsersForCourse(cid);
       setUsers(data);
     } catch (e) {
       console.error(e);
@@ -125,8 +131,8 @@ export default function People() {
           <tbody>
             {users.map((user: any) => (
               <tr key={user._id}>
-                <td className="wd-full-name text-nowrap">
-                  <FaUserCircle className="me-2 fs-1 text-secondary" />
+                <td className="wd-full-name" style={{ whiteSpace: "normal" }}>
+                  <FaUserCircle className="me-2 fs-1 text-secondary align-middle" />
                   <span className="wd-first-name">{user.firstName}</span>{" "}
                   <span className="wd-last-name">{user.lastName}</span>
                 </td>
