@@ -12,14 +12,20 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../store";
 import {
   editModule,
+  editLesson,
+  updateLesson,
   updateModule as updateModuleInStore,
   setModules,
 } from "./reducer";
 import * as client from "../../client";
 
 function stripEditingForApi(module: any) {
-  const { editing: _e, ...rest } = module;
-  return rest;
+  const { editing: _me, lessons, ...rest } = module;
+  const cleanLessons = (lessons ?? []).map((l: any) => {
+    const { editing: _le, module: _mod, ...lessonRest } = l;
+    return lessonRest;
+  });
+  return { ...rest, lessons: cleanLessons };
 }
 
 export default function Modules() {
@@ -35,25 +41,43 @@ export default function Modules() {
   }, [cid, dispatch]);
 
   const onRemoveModule = async (moduleId: string) => {
-    await client.deleteModule(moduleId);
+    if (!cid) return;
+    await client.deleteModule(cid as string, moduleId);
     dispatch(
       setModules(modules.filter((m: any) => m._id !== moduleId))
     );
   };
 
-  const onUpdateModule = async (moduleId: string) => {
-    const mod = modules.find((m: any) => m._id === moduleId);
-    if (!mod) return;
-    const toSave = { ...mod, editing: false };
-    await client.updateModule(stripEditingForApi(toSave));
-    dispatch(
-      setModules(
-        modules.map((m: any) => (m._id === moduleId ? toSave : m))
-      )
+  const onUpdateModule = async (module: any) => {
+    if (!cid) return;
+    const toSave = { ...module, editing: false };
+    await client.updateModule(cid as string, stripEditingForApi(toSave));
+    const newModules = modules.map((m: any) =>
+      m._id === module._id ? toSave : m
     );
+    dispatch(setModules(newModules));
   };
 
+  const onSaveLesson = useCallback(
+    async (moduleId: string, lessonId: string) => {
+      if (!cid) return;
+      const mod = modules.find((m: any) => m._id === moduleId);
+      if (!mod) return;
+      const toSave = {
+        ...mod,
+        lessons: (mod.lessons ?? []).map((l: any) =>
+          l._id === lessonId ? { ...l, editing: false } : { ...l, editing: false }
+        ),
+        editing: false,
+      };
+      await client.updateModule(cid as string, stripEditingForApi(toSave));
+      dispatch(updateModuleInStore(toSave));
+    },
+    [cid, modules, dispatch]
+  );
+
   const onAddLesson = async (moduleId: string) => {
+    if (!cid) return;
     const mod = modules.find((m: any) => m._id === moduleId);
     if (!mod) return;
     const newLesson = {
@@ -64,7 +88,7 @@ export default function Modules() {
     };
     const lessons = [...(mod.lessons ?? []), newLesson];
     const toSave = { ...mod, lessons, editing: false };
-    await client.updateModule(stripEditingForApi(toSave));
+    await client.updateModule(cid as string, stripEditingForApi(toSave));
     dispatch(
       setModules(
         modules.map((m: any) => (m._id === moduleId ? toSave : m))
@@ -125,7 +149,7 @@ export default function Modules() {
                   }
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
-                      void onUpdateModule(module._id);
+                      void onUpdateModule(module);
                     }
                   }}
                 />
@@ -143,8 +167,35 @@ export default function Modules() {
                     key={lesson._id}
                     className="wd-lesson p-3 ps-1"
                   >
-                    <BsGripVertical className="me-2 fs-3" /> {lesson.name}{" "}
-                    <LessonControlButtons />
+                    <BsGripVertical className="me-2 fs-3" />{" "}
+                    {!lesson.editing && lesson.name}{" "}
+                    {lesson.editing && (
+                      <FormControl
+                        className="w-50 d-inline-block"
+                        value={lesson.name ?? ""}
+                        onChange={(e) =>
+                          dispatch(
+                            updateLesson({
+                              moduleId: module._id,
+                              lessonId: lesson._id,
+                              updates: { name: e.target.value },
+                            })
+                          )
+                        }
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            void onSaveLesson(module._id, lesson._id);
+                          }
+                        }}
+                      />
+                    )}
+                    <LessonControlButtons
+                      moduleId={module._id}
+                      lessonId={lesson._id}
+                      editLesson={(mid, lid) =>
+                        dispatch(editLesson({ moduleId: mid, lessonId: lid }))
+                      }
+                    />
                   </ListGroupItem>
                 ))}
               </ListGroup>

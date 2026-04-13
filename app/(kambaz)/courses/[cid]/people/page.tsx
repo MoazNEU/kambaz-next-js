@@ -7,6 +7,7 @@ import { useParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store";
+import * as coursesClient from "../../client";
 import * as usersClient from "../../../users/client";
 
 const emptyNewUser = {
@@ -43,7 +44,7 @@ export default function People() {
     if (!cid) return;
     setLoading(true);
     try {
-      const data = await usersClient.findUsersForCourse(cid as string);
+      const data = await coursesClient.findUsersForCourse(cid as string);
       setUsers(data);
     } catch (e) {
       console.error(e);

@@ -29,6 +29,45 @@ const modulesSlice = createSlice({
                 m._id === moduleId ? { ...m, editing: true } : m
             ) as any;
         },
+        editLesson: (
+            state,
+            {
+                payload: { moduleId, lessonId },
+            }: PayloadAction<{ moduleId: string; lessonId: string }>
+        ) => {
+            state.modules = state.modules.map((m: any) => {
+                if (m._id !== moduleId) return m;
+                return {
+                    ...m,
+                    lessons: (m.lessons ?? []).map((l: any) =>
+                        l._id === lessonId
+                            ? { ...l, editing: true }
+                            : { ...l, editing: false }
+                    ),
+                };
+            }) as any;
+        },
+        updateLesson: (
+            state,
+            {
+                payload,
+            }: PayloadAction<{
+                moduleId: string;
+                lessonId: string;
+                updates: Record<string, unknown>;
+            }>
+        ) => {
+            const { moduleId, lessonId, updates } = payload;
+            state.modules = state.modules.map((m: any) => {
+                if (m._id !== moduleId) return m;
+                return {
+                    ...m,
+                    lessons: (m.lessons ?? []).map((l: any) =>
+                        l._id === lessonId ? { ...l, ...updates } : l
+                    ),
+                };
+            }) as any;
+        },
     },
 });
 export const {
@@ -37,6 +76,8 @@ export const {
     deleteModule,
     updateModule,
     editModule,
+    editLesson,
+    updateLesson,
 } =
     modulesSlice.actions;
 export default modulesSlice.reducer;

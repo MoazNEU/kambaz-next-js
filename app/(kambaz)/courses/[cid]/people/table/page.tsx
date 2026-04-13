@@ -4,7 +4,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
 import PeopleTable from "../../../people/Table";
-import * as usersClient from "../../../../users/client";
+import * as coursesClient from "../../../client";
 
 export default function CoursePeopleTablePage() {
   const { cid } = useParams();
@@ -12,7 +12,7 @@ export default function CoursePeopleTablePage() {
 
   const fetchUsers = useCallback(async () => {
     if (!cid) return;
-    const data = await usersClient.findUsersForCourse(cid as string);
+    const data = await coursesClient.findUsersForCourse(cid as string);
     setUsers(data);
   }, [cid]);
 

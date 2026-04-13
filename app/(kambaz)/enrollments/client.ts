@@ -17,16 +17,3 @@ export const findEnrollmentsForCurrentUser = async () => {
   return response.data;
 };
 
-export const enrollInCourse = async (courseId: string) => {
-  const response = await axiosWithCredentials.post(
-    `${USERS_API}/current/enrollments`,
-    { courseId }
-  );
-  return response.data;
-};
-
-export const unenrollFromCourse = async (courseId: string) => {
-  await axiosWithCredentials.delete(
-    `${USERS_API}/current/enrollments/${courseId}`
-  );
-};

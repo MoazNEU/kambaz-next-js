@@ -5,13 +5,6 @@ export { HTTP_SERVER };
 export const USERS_API = HTTP_SERVER ? `${HTTP_SERVER}/api/users` : "";
 export const COURSES_API = HTTP_SERVER ? `${HTTP_SERVER}/api/courses` : "";
 
-export const findUsersForCourse = async (courseId: string) => {
-  const response = await axiosWithCredentials.get(
-    `${COURSES_API}/${courseId}/users`
-  );
-  return response.data;
-};
-
 export const createUserInCourse = async (
   courseId: string,
   user: Record<string, unknown>
