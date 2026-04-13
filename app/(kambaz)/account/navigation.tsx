@@ -8,19 +8,33 @@ export default function AccountNavigation() {
   const { currentUser } = useSelector((state: RootState) => state.accountReducer);
   const links = currentUser ? ["profile"] : ["signin", "signup"];
   const pathname = usePathname();
- return (
-   <Nav variant="pills">
-     {links.map((link) => (
-       <NavItem key={link}>
-         <NavLink
-           as={Link}
-           href={`/account/${link}`}
-           active={pathname.endsWith(link)}
-         >
-           {link} </NavLink> </NavItem>
-     ))}
-   </Nav>
-);}
+  return (
+    <Nav variant="pills">
+      {links.map((link) => (
+        <NavItem key={link}>
+          <NavLink
+            as={Link}
+            href={`/account/${link}`}
+            active={pathname.endsWith(link)}
+          >
+            {link}
+          </NavLink>
+        </NavItem>
+      ))}
+      {currentUser && currentUser.role === "ADMIN" && (
+        <NavItem>
+          <NavLink
+            as={Link}
+            href="/account/users"
+            active={pathname.includes("/account/users")}
+          >
+            Users
+          </NavLink>
+        </NavItem>
+      )}
+    </Nav>
+  );
+}
 
 //   <div id="wd-account-navigation" className="wd list-group fs-5 rounded-0">
 //     <Link href="signin" id="wd-course-home-link"

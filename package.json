@@ -12,6 +12,8 @@
     "@reduxjs/toolkit": "^2.11.2",
     "axios": "^1.14.0",
     "bootstrap": "^5.3.8",
+    "express": "^5.2.1",
+    "mongoose": "^9.4.1",
     "next": "16.1.1",
     "react": "19.2.3",
     "react-bootstrap": "^2.10.10",

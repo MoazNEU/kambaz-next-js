@@ -1,9 +1,10 @@
 import { axiosWithCredentials } from "../axios";
+import { HTTP_SERVER } from "../httpServer";
 
-export const HTTP_SERVER = process.env.NEXT_PUBLIC_HTTP_SERVER;
+export { HTTP_SERVER };
 
 export const modulesApiForCourse = (cid: string) =>
-  `${HTTP_SERVER}/api/courses/${cid}/modules`;
+  HTTP_SERVER ? `${HTTP_SERVER}/api/courses/${cid}/modules` : "";
 
 export const findModulesForCourse = async (cid: string) => {
   const response = await axiosWithCredentials.get(modulesApiForCourse(cid));

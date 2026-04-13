@@ -1,8 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { FormControl } from "react-bootstrap";
-
-const HTTP_SERVER = process.env.NEXT_PUBLIC_HTTP_SERVER;
+import { HTTP_SERVER } from "@/app/(kambaz)/httpServer";
 
 const initialAssignment = {
   id: 1, title: "NodeJS Assignment",

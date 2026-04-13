@@ -1,13 +1,14 @@
 import axios from "axios";
 import { axiosWithCredentials } from "../axios";
+import { HTTP_SERVER } from "../httpServer";
 
 /** Use credentials for module CRUD so it behaves like the rest of the app behind CORS. */
 const api = axiosWithCredentials;
 
-export const HTTP_SERVER = process.env.NEXT_PUBLIC_HTTP_SERVER;
-export const COURSES_API = `${HTTP_SERVER}/api/courses`;
-export const MODULES_API = `${HTTP_SERVER}/api/modules`;
-export const USERS_API = `${HTTP_SERVER}/api/users`;
+export { HTTP_SERVER };
+export const COURSES_API = HTTP_SERVER ? `${HTTP_SERVER}/api/courses` : "";
+export const MODULES_API = HTTP_SERVER ? `${HTTP_SERVER}/api/modules` : "";
+export const USERS_API = HTTP_SERVER ? `${HTTP_SERVER}/api/users` : "";
 
 export const fetchAllCourses = async () => {
   const { data } = await axios.get(COURSES_API);

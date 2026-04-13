@@ -1,7 +1,8 @@
 import axios from "axios";
+import { HTTP_SERVER } from "../httpServer";
 
-export const HTTP_SERVER = process.env.NEXT_PUBLIC_HTTP_SERVER;
-export const COURSES_API = `${HTTP_SERVER}/api/courses`;
+export { HTTP_SERVER };
+export const COURSES_API = HTTP_SERVER ? `${HTTP_SERVER}/api/courses` : "";
 
 const assignmentsUrl = (courseId: string) =>
   `${COURSES_API}/${courseId}/assignments`;
